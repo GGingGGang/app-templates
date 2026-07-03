@@ -5,6 +5,7 @@ resources:
   - deployment.yaml
   - service.yaml
   - httproute.yaml
+  - servicemonitor.yaml
 images:
   - name: __SVC__
     newName: ghcr.io/__ORGLC__/svc-__SVC__

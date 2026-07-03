@@ -1,13 +1,18 @@
 package main
 
 import (
+	"context"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/__ORG__/svc-__SVC__/internal/api"
 )
+
+var version = "dev" // -ldflags "-X main.version=<GIT_SHA>"
 
 func main() {
 	port := os.Getenv("HTTP_PORT")
@@ -20,15 +25,28 @@ func main() {
 		Handler: api.Router(),
 	}
 
+	log.Printf("svc-__SVC__ %s listening on :%s", version, port)
+
+	errCh := make(chan error, 1)
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			os.Exit(1)
+			errCh <- err
 		}
 	}()
 
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGTERM, syscall.SIGINT)
-	<-sig
 
-	srv.Close()
+	select {
+	case err := <-errCh:
+		log.Fatalf("server failed: %v", err)
+	case s := <-sig:
+		log.Printf("received %s, shutting down", s)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Printf("graceful shutdown failed: %v", err)
+	}
 }
