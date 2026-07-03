@@ -5,11 +5,14 @@
 | 템플릿 | 설명 |
 |--------|------|
 | `go-app` | Go (chi) HTTP 서비스 |
+| `java-app/gradle` | Java 21 / Spring Boot 3 HTTP 서비스 (Gradle) |
+
+> `java-app/maven` 은 참고용 변형 — 표준 씨앗은 `java-app/gradle`. 두 변형의 Jenkinsfile 은 동일 (파이프라인은 빌드툴 비의존).
 
 ## 1. 스탬프
 
 ```bash
-cd go-app
+cd go-app       # 또는 java-app/gradle
 bash sed-template.sh <ORG> <SVC>
 ```
 

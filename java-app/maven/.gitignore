@@ -1,0 +1,20 @@
+# build output
+target/
+*.jar
+*.war
+
+# test artifacts
+surefire-reports/
+*.exec
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# private docs
+PLAN.md
+CLAUDE.md

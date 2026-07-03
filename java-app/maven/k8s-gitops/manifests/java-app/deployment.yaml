@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: __SVC__
+  namespace: __SVC__
+  labels:
+    app.kubernetes.io/name: __SVC__
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: __SVC__
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: __SVC__
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: __SVC__
+          image: __SVC__
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: HTTP_PORT
+              value: "8080"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-XX:MaxRAMPercentage=75.0"
+          # JVM 웜업 여유 — startupProbe 로 기동을 감싸고 그 뒤 liveness/readiness 전환
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 384Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
