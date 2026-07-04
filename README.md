@@ -44,7 +44,29 @@ git branch -M main
 git push -u origin main
 ```
 
-organizationFolder 가 `svc-*` 를 스캔해 파이프라인을 잡는다.
+#### Jenkins 편입
+
+레포별 push webhook 등록 — 개인 계정은 계정-레벨 훅이 없어 레포마다 1회:
+
+```bash
+# gh 토큰에 admin:repo_hook 없으면 선행: gh auth refresh -h github.com -s admin:repo_hook
+gh api "repos/<ORG>/svc-<SVC>/hooks" -f name=web -F active=true \
+  -f 'events[]=push' \
+  -f 'config[url]=https://ci-hook.<DOMAIN>/github-webhook/' \
+  -f 'config[content_type]=json'
+```
+
+webhook 은 **이미 발견된 잡만** 트리거한다. 신규 레포를 잡으로 만드는 건 스캔:
+
+- 자동 — organizationFolder 재스캔(15m 주기) 또는 controller 재기동(부팅 스캔) 시 `svc-*` 규칙으로 편입
+- 즉시 — 새 ref 생성 이벤트만 미발견 레포를 바로 편입시키므로, 임시 브랜치로 킥:
+
+```bash
+git push origin main:onboard   # 편입 + 전체 브랜치 인덱싱
+git push origin :onboard       # 잡 생성 확인 후 삭제
+```
+
+> 함정: 레포를 미리 만들어 두고(초기 커밋 존재) 나중에 코드를 push 하면 `created:false` 이벤트라 편입되지 않는다 — 위 킥 또는 다음 재스캔 대기.
 
 ### gitops 레포
 
@@ -58,6 +80,15 @@ cp -r _generated/gitops-<SVC>/argocd/apps/<SVC>.yaml <k8s-gitops>/argocd/apps/
 ```bash
 # 네임스페이스 <SVC> 를 플랫폼 네임스페이스 매니페스트에 추가
 # k8s-gitops/argocd/project.yaml 의 spec.destinations 에 namespace <SVC> 직접 추가 (편집)
+```
+
+네임스페이스가 생기면 **pull Secret 복사** — Secret 은 NS 스코프 + git 미보관이라 새 NS 마다 수동 1회. 누락 시 첫 배포가 `ImagePullBackOff` (GHCR 신규 패키지는 첫 push 때 private 로 생성):
+
+```bash
+kubectl -n <SVC> create secret generic ghcr-pull \
+  --type=kubernetes.io/dockerconfigjson \
+  --from-literal=.dockerconfigjson="$(kubectl -n core get secret ghcr-pull \
+      -o go-template='{{index .data ".dockerconfigjson" | base64decode}}')"
 ```
 
 커밋 — `manifests/<SVC>`·`apps/<SVC>.yaml` 은 스탬프 산출물, `project.yaml` 은 위에서 직접 편집한 결과:

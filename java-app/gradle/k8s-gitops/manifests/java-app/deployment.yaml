@@ -63,3 +63,10 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
+          # 내장 Tomcat 이 기동 시 /tmp 에 작업 디렉토리를 생성 — 읽기전용 루트 유지, /tmp 만 쓰기 허용
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
