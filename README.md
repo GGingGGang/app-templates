@@ -91,6 +91,17 @@ kubectl -n <SVC> create secret generic ghcr-pull \
       -o go-template='{{index .data ".dockerconfigjson" | base64decode}}')"
 ```
 
+DB 접속이 필요한 서비스라면 **DB 온보딩**도 같은 시점에 — 전용 DB/유저 생성 + `db-creds` Secret 등록 (`oci-terraform` 레포 소관, deployment.yaml 이 이미 `db-creds` 를 `secretKeyRef` 로 참조):
+
+```bash
+cd <oci-terraform>
+DB_HOST=$(terraform -chdir=terraform output -raw heatwave_ip) \
+DB_PORT=$(terraform -chdir=terraform output -raw heatwave_port) \
+  scripts/onboard-app-db.sh <SVC> <SVC>
+```
+
+상세는 `oci-terraform/scripts/README.md` 참조.
+
 커밋 — `manifests/<SVC>`·`apps/<SVC>.yaml` 은 스탬프 산출물, `project.yaml` 은 위에서 직접 편집한 결과:
 
 ```bash
