@@ -5,7 +5,7 @@ Go 1.23 / chi HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`/`__ORGLC__`
 ## 포함된 것
 
 - `Dockerfile` — distroless nonroot 멀티스테이지 빌드
-- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `deployBump`)
+- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `trivyImageScan` + `deployBump`)
 - `cmd/server/main.go` + `internal/api/{router,health}.go` — hello 서버 (healthz/readyz)
 - `k8s-gitops/manifests/go-app/` — deployment/service/httproute/servicemonitor/kustomization
 - `k8s-gitops/argocd/apps/go-app.yaml` — Application 포인터

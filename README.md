@@ -35,7 +35,7 @@ bash sed-template.sh <ORG> <SVC>
 
 ```bash
 cd _generated/svc-<SVC>
-go mod tidy
+go mod tidy    # go 씨앗 기준 — node 는 npm install (선택), java 는 생략 가능 (CI 가 Dockerfile 안에서 빌드)
 git init
 git add -A
 git commit -m "bootstrap svc-<SVC>"
@@ -78,7 +78,7 @@ cp -r _generated/gitops-<SVC>/argocd/apps/<SVC>.yaml <k8s-gitops>/argocd/apps/
 네임스페이스 배선 — **`sed-template.sh` 산출물에 없음, 아래 2곳은 직접 수동 편집**:
 
 ```bash
-# 네임스페이스 <SVC> 를 플랫폼 네임스페이스 매니페스트에 추가
+# 네임스페이스 <SVC> 를 플랫폼 네임스페이스 매니페스트에 추가 (oci-always-free-k8s 의 kubernetes/infra/namespaces/namespaces.yaml)
 # k8s-gitops/argocd/project.yaml 의 spec.destinations 에 namespace <SVC> 직접 추가 (편집)
 ```
 
@@ -91,16 +91,16 @@ kubectl -n <SVC> create secret generic ghcr-pull \
       -o go-template='{{index .data ".dockerconfigjson" | base64decode}}')"
 ```
 
-DB 접속이 필요한 서비스라면 **DB 온보딩**도 같은 시점에 — 전용 DB/유저 생성 + `db-creds` Secret 등록 (`oci-terraform` 레포 소관, deployment.yaml 이 이미 `db-creds` 를 `secretKeyRef` 로 참조):
+DB 접속이 필요한 서비스라면 **DB 온보딩**도 같은 시점에 — 전용 DB/유저 생성 + `db-creds` Secret 등록 ([oci-always-free-k8s](https://github.com/GGingGGang/oci-always-free-k8s) 레포 소관). 씨앗 deployment.yaml 에는 `db-creds` 참조가 없음 — 필요한 서비스만 `secretKeyRef` 로 직접 추가 (실제 예: [k8s-gitops/manifests](https://github.com/GGingGGang/k8s-gitops/tree/main/manifests) 의 core/auth/batch):
 
 ```bash
-cd <oci-terraform>
+cd <oci-always-free-k8s>
 DB_HOST=$(terraform -chdir=terraform output -raw heatwave_ip) \
 DB_PORT=$(terraform -chdir=terraform output -raw heatwave_port) \
   scripts/onboard-app-db.sh <SVC> <SVC>
 ```
 
-상세는 `oci-terraform/scripts/README.md` 참조.
+상세는 [oci-always-free-k8s/scripts/README.md](https://github.com/GGingGGang/oci-always-free-k8s/blob/main/scripts/README.md) 참조.
 
 커밋 — `manifests/<SVC>`·`apps/<SVC>.yaml` 은 스탬프 산출물, `project.yaml` 은 위에서 직접 편집한 결과:
 

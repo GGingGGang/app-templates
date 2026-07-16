@@ -5,7 +5,7 @@ Node.js 22 / TypeScript / Fastify HTTP 서비스 씨앗. `sed-template.sh` 로 `
 ## 포함된 것
 
 - `Dockerfile` — node:22-alpine 빌드(tsc) → distroless nodejs22 nonroot 멀티스테이지
-- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `deployBump`)
+- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `trivyImageScan` + `deployBump`)
 - `package.json` / `tsconfig.json` — ESM(NodeNext), `svc-<SVC>` 로 치환되는 name
 - `src/server.ts` — 엔트리(포트·graceful shutdown), `src/router.ts` — Fastify 앱·라우트, `src/health.ts` — 핸들러
 - `k8s-gitops/manifests/node-app/` — deployment/service/httproute/servicemonitor/kustomization

@@ -4,8 +4,8 @@ Java 21 / Spring Boot 3.4 HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`
 
 ## 포함된 것
 
-- `Dockerfile` — Gradle 빌드 → distroless java21 nonroot 멀티스테이지 빌드. 의존성 해석 레이어(`build.gradle.kts` 만 COPY)와 소스 레이어 분리 — Kaniko cache 적중률 확보
-- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `deployBump`)
+- `Dockerfile` — Gradle 빌드 → distroless java21 nonroot 멀티스테이지 빌드. 의존성 해석 레이어(`build.gradle.kts`/`settings.gradle.kts` 만 COPY)와 소스 레이어 분리 — Kaniko cache 적중률 확보
+- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `trivyImageScan` + `deployBump`)
 - `build.gradle.kts` / `settings.gradle.kts` — Spring Boot 플러그인 기반, `bootJar` 산출물 이름을 `svc-<SVC>.jar` 로 고정 (Dockerfile 이 이 경로를 집는다)
 - `src/main/java/cloud/ggang/app/` — `Application` + `HealthController` (healthz/readyz)
 - `src/main/resources/application.yml` — 포트·graceful shutdown·actuator(/metrics) 설정

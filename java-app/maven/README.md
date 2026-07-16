@@ -1,21 +1,21 @@
-# java-app
+# java-app (Maven)
 
 Java 21 / Spring Boot 3.4 HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`/`__ORGLC__`/`__SVC__` 토큰을 치환해 새 `svc-<SVC>` 서비스를 찍어낸다.
 
 ## 포함된 것
 
 - `Dockerfile` — Maven 빌드 → distroless java21 nonroot 멀티스테이지 빌드
-- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `deployBump`)
+- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `trivyImageScan` + `deployBump`)
 - `pom.xml` — spring-boot-starter-parent 기반, `finalName` 을 `svc-<SVC>` 로 고정
 - `src/main/java/cloud/ggang/app/` — `Application` + `HealthController` (healthz/readyz)
 - `src/main/resources/application.yml` — 포트·graceful shutdown·actuator(/metrics) 설정
 - `k8s-gitops/manifests/java-app/` — deployment/service/httproute/servicemonitor/kustomization
 - `k8s-gitops/argocd/apps/java-app.yaml` — Application 포인터
 
-사용법은 상위 [`../README.md`](../README.md) 참조 (스탬프 → 이동 → 구동 순서).
+사용법은 상위 [`../../README.md`](../../README.md) 참조 (스탬프 → 이동 → 구동 순서).
 
 > 패키지는 `cloud.ggang.app` 로 고정 (서비스 이름을 패키지에 넣지 않아 디렉터리 리네임 불필요).
-> Maven artifactId 만 `svc-<SVC>` 로 치환된다.
+> Maven artifactId·name 과 jar 이름(finalName)만 `svc-<SVC>` 로 치환된다.
 
 ## Ports
 
