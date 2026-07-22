@@ -1,11 +1,11 @@
 # go-app
 
-Go 1.23 / chi HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`/`__ORGLC__`/`__SVC__` 토큰을 치환해 새 `svc-<SVC>` 서비스를 찍어낸다.
+Go 1.25 / chi HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`/`__ORGLC__`/`__SVC__` 토큰을 치환해 새 `svc-<SVC>` 서비스를 찍어낸다.
 
 ## 포함된 것
 
 - `Dockerfile` — distroless nonroot 멀티스테이지 빌드
-- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `trivyImageScan` + `deployBump`)
+- `Jenkinsfile` — `@Library('shared')` + `ci(service: '<svc>')` 2줄. Build/Scan/Sign/Bump 전 스테이지는 `jenkins-shared-library`의 `ci()`가 `services.yaml` 설정(`defaults: scanGate=false, sign=true`)대로 조립 — 앱 레포는 정책 값을 갖지 않음
 - `cmd/server/main.go` + `internal/api/{router,health}.go` — hello 서버 (healthz/readyz)
 - `k8s-gitops/manifests/go-app/` — deployment/service/httproute/servicemonitor/kustomization
 - `k8s-gitops/argocd/apps/go-app.yaml` — Application 포인터

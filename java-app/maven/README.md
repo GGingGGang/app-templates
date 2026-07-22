@@ -5,7 +5,7 @@ Java 21 / Spring Boot 3.4 HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`
 ## 포함된 것
 
 - `Dockerfile` — Maven 빌드 → distroless java21 nonroot 멀티스테이지 빌드
-- `Jenkinsfile` — thin pipeline (`@Library('shared')` + `kanikoBuild` + `trivyImageScan` + `deployBump`)
+- `Jenkinsfile` — `@Library('shared')` + `ci(service: '<svc>')` 2줄. Build/Scan/Sign/Bump 전 스테이지는 `jenkins-shared-library`의 `ci()`가 `services.yaml` 설정(`defaults: scanGate=false, sign=true`)대로 조립 — 앱 레포는 정책 값을 갖지 않음
 - `pom.xml` — spring-boot-starter-parent 기반, `finalName` 을 `svc-<SVC>` 로 고정
 - `src/main/java/cloud/ggang/app/` — `Application` + `HealthController` (healthz/readyz)
 - `src/main/resources/application.yml` — 포트·graceful shutdown·actuator(/metrics) 설정
@@ -13,6 +13,8 @@ Java 21 / Spring Boot 3.4 HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`
 - `k8s-gitops/argocd/apps/java-app.yaml` — Application 포인터
 
 사용법은 상위 [`../../README.md`](../../README.md) 참조 (스탬프 → 이동 → 구동 순서).
+
+> 서비스가 외부 HTTP를 받지 않는 내부 전용(예: batch consumer)이면 스탬프 후 `k8s-gitops/manifests/<svc>/httproute.yaml`을 삭제하고 `kustomization.yaml`의 `resources:` 목록에서도 빼야 한다 — `k8s-gitops/manifests/batch/`가 이 패턴의 실례.
 
 > 패키지는 `cloud.ggang.app` 로 고정 (서비스 이름을 패키지에 넣지 않아 디렉터리 리네임 불필요).
 > Maven artifactId·name 과 jar 이름(finalName)만 `svc-<SVC>` 로 치환된다.
