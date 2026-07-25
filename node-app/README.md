@@ -5,7 +5,7 @@ Node.js 22 / TypeScript / Fastify HTTP 서비스 씨앗. `sed-template.sh` 로 `
 ## 포함된 것
 
 - `Dockerfile` — node:22-alpine 빌드(tsc) → distroless nodejs22 nonroot 멀티스테이지
-- `Jenkinsfile` — `@Library('shared')` + `ci(service: '<svc>')` 2줄. Build/Scan/Sign/Bump 전 스테이지는 `jenkins-shared-library`의 `ci()`가 `services.yaml` 설정(`defaults: scanGate=false, sign=true`)대로 조립 — 앱 레포는 정책 값을 갖지 않음
+- `Jenkinsfile` — `@Library('shared')` + `ci(service: '<svc>')` 2줄. Test → Build & Push → Image Scan → Sign → Bump 전 스테이지는 `jenkins-shared-library`의 `ci()`가 `services.yaml` 대로 조립 — 스캔 게이트·서명·언어별 Test 게이트 같은 정책 값은 앱 레포가 아니라 [jenkins-shared-library](https://github.com/GGingGGang/jenkins-shared-library) 소유 (현재 값은 그쪽 README 참조)
 - `package.json` / `tsconfig.json` — ESM(NodeNext), `svc-<SVC>` 로 치환되는 name
 - `src/server.ts` — 엔트리(포트·graceful shutdown), `src/router.ts` — Fastify 앱·라우트, `src/health.ts` — 핸들러
 - `k8s-gitops/manifests/node-app/` — deployment/service/httproute/servicemonitor/kustomization

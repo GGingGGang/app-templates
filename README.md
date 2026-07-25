@@ -8,7 +8,7 @@
 | `java-app/gradle` | Java 21 / Spring Boot 3 HTTP 서비스 (Gradle) |
 | `node-app` | Node.js 22 / TypeScript / Fastify HTTP 서비스 |
 
-> `java-app/maven` 은 참고용 변형 — 표준 씨앗은 `java-app/gradle`. 두 변형의 Jenkinsfile 은 동일 (파이프라인은 빌드툴 비의존).
+> `java-app/maven` 은 참고용 변형 — 표준 씨앗은 `java-app/gradle`. Jenkinsfile 은 두 변형이 동일하지만 **파이프라인이 빌드툴 비의존인 것은 아니다**: `services.yaml` 의 `languages.java` 가 `gradle --no-daemon test` 하나로 정의돼 있어, maven 으로 찍은 서비스는 Test 게이트(파이프라인 맨 앞)에서 실패해 이미지 빌드에 도달하지 못한다. maven 서비스를 실제로 온보딩하려면 `jenkins-shared-library` 에 언어 키 추가가 선행돼야 한다.
 
 ## 1. 스탬프
 

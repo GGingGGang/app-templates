@@ -5,7 +5,7 @@ Java 21 / Spring Boot 3.4 HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`
 ## 포함된 것
 
 - `Dockerfile` — Maven 빌드 → distroless java21 nonroot 멀티스테이지 빌드
-- `Jenkinsfile` — `@Library('shared')` + `ci(service: '<svc>')` 2줄. Build/Scan/Sign/Bump 전 스테이지는 `jenkins-shared-library`의 `ci()`가 `services.yaml` 설정(`defaults: scanGate=false, sign=true`)대로 조립 — 앱 레포는 정책 값을 갖지 않음
+- `Jenkinsfile` — `@Library('shared')` + `ci(service: '<svc>')` 2줄. Test → Build & Push → Image Scan → Sign → Bump 전 스테이지는 `jenkins-shared-library`의 `ci()`가 `services.yaml` 대로 조립 — 스캔 게이트·서명·언어별 Test 게이트 같은 정책 값은 앱 레포가 아니라 [jenkins-shared-library](https://github.com/GGingGGang/jenkins-shared-library) 소유 (현재 값은 그쪽 README 참조)
 - `pom.xml` — spring-boot-starter-parent 기반, `finalName` 을 `svc-<SVC>` 로 고정
 - `src/main/java/cloud/ggang/app/` — `Application` + `HealthController` (healthz/readyz)
 - `src/main/resources/application.yml` — 포트·graceful shutdown·actuator(/metrics) 설정
@@ -13,6 +13,8 @@ Java 21 / Spring Boot 3.4 HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`
 - `k8s-gitops/argocd/apps/java-app.yaml` — Application 포인터
 
 사용법은 상위 [`../../README.md`](../../README.md) 참조 (스탬프 → 이동 → 구동 순서).
+
+> **CI 게이트 미지원** — `services.yaml` 의 `languages.java` 는 `gradle --no-daemon test` 하나뿐이라, 이 씨앗으로 찍은 서비스는 Test 게이트(맨 앞 스테이지)에서 실패한다. 참고용 변형인 이유. 실제 온보딩하려면 `jenkins-shared-library` 의 `languages` 에 maven 키 추가가 선행돼야 한다.
 
 > 서비스가 외부 HTTP를 받지 않는 내부 전용(예: batch consumer)이면 스탬프 후 `k8s-gitops/manifests/<svc>/httproute.yaml`을 삭제하고 `kustomization.yaml`의 `resources:` 목록에서도 빼야 한다 — `k8s-gitops/manifests/batch/`가 이 패턴의 실례.
 

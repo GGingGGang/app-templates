@@ -5,7 +5,7 @@ Go 1.25 / chi HTTP 서비스 씨앗. `sed-template.sh` 로 `__ORG__`/`__ORGLC__`
 ## 포함된 것
 
 - `Dockerfile` — distroless nonroot 멀티스테이지 빌드
-- `Jenkinsfile` — `@Library('shared')` + `ci(service: '<svc>')` 2줄. Build/Scan/Sign/Bump 전 스테이지는 `jenkins-shared-library`의 `ci()`가 `services.yaml` 설정(`defaults: scanGate=false, sign=true`)대로 조립 — 앱 레포는 정책 값을 갖지 않음
+- `Jenkinsfile` — `@Library('shared')` + `ci(service: '<svc>')` 2줄. Test → Build & Push → Image Scan → Sign → Bump 전 스테이지는 `jenkins-shared-library`의 `ci()`가 `services.yaml` 대로 조립 — 스캔 게이트·서명·언어별 Test 게이트 같은 정책 값은 앱 레포가 아니라 [jenkins-shared-library](https://github.com/GGingGGang/jenkins-shared-library) 소유 (현재 값은 그쪽 README 참조)
 - `cmd/server/main.go` + `internal/api/{router,health}.go` — hello 서버 (healthz/readyz)
 - `k8s-gitops/manifests/go-app/` — deployment/service/httproute/servicemonitor/kustomization
 - `k8s-gitops/argocd/apps/go-app.yaml` — Application 포인터
