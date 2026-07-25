@@ -6,8 +6,9 @@ Node.js 22 / TypeScript / Fastify HTTP 서비스 씨앗. `sed-template.sh` 로 `
 
 - `Dockerfile` — node:22-alpine 빌드(tsc) → distroless nodejs22 nonroot 멀티스테이지
 - `Jenkinsfile` — `@Library('shared')` + `ci(service: '<svc>')` 2줄. Test → Build & Push → Image Scan → Sign → Bump 전 스테이지는 `jenkins-shared-library`의 `ci()`가 `services.yaml` 대로 조립 — 스캔 게이트·서명·언어별 Test 게이트 같은 정책 값은 앱 레포가 아니라 [jenkins-shared-library](https://github.com/GGingGGang/jenkins-shared-library) 소유 (현재 값은 그쪽 README 참조)
-- `package.json` / `tsconfig.json` — ESM(NodeNext), `svc-<SVC>` 로 치환되는 name
-- `src/server.ts` — 엔트리(포트·graceful shutdown), `src/router.ts` — Fastify 앱·라우트, `src/health.ts` — 핸들러
+- `package.json` / `package-lock.json` / `tsconfig.json` — ESM(NodeNext), `svc-<SVC>` 로 치환되는 name. 락파일 동봉 — CI 게이트(`npm ci && npm test`)가 스탬프 직후 커밋으로 바로 통과한다
+- `vitest.config.ts` / `vitest.integration.config.ts` — test-contract.md 관용: 기본 config 는 `*.integration.test.ts` 제외(유닛 게이트), 통합 config 는 그 반대(GHA 용, 통합 테스트 0개인 씨앗 상태에선 `passWithNoTests`)
+- `src/server.ts` — 엔트리(포트·graceful shutdown), `src/router.ts` — Fastify 앱·라우트, `src/health.ts` — 핸들러, `src/router.test.ts` — 유닛 테스트(healthz/readyz/metrics inject)
 - `k8s-gitops/manifests/node-app/` — deployment/service/httproute/servicemonitor/kustomization
 - `k8s-gitops/argocd/apps/node-app.yaml` — Application 포인터
 
@@ -49,7 +50,8 @@ APP_VERSION=<GIT_SHA>   # Dockerfile 이 GIT_SHA 로 주입 (기본 dev)
 ## 로컬 확인 (선택)
 
 ```bash
-npm install
+npm ci             # 락파일 동봉 — CI 게이트와 같은 트리
+npm test           # 유닛 게이트와 동일 커맨드
 npm run dev        # tsx watch, :3000
 # 또는
 npm run build && npm start   # dist/server.js

@@ -35,7 +35,7 @@ bash sed-template.sh <ORG> <SVC>
 
 ```bash
 cd _generated/svc-<SVC>
-go mod tidy    # go 씨앗 기준 — node 는 npm install (선택), java 는 생략 가능 (CI 가 Dockerfile 안에서 빌드)
+go mod tidy    # go 씨앗 기준 — node 는 생략 가능 (락파일 동봉, 확인은 npm ci && npm test), java 는 생략 가능 (CI 가 Dockerfile 안에서 빌드)
 git init
 git add -A
 git commit -m "bootstrap svc-<SVC>"

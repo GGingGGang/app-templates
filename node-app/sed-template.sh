@@ -76,7 +76,7 @@ cat <<EOF
     $GITOPS/argocd/apps/$SVC.yaml  -> k8s-gitops/argocd/apps/$SVC.yaml
 
 다음 (명령만, 직접 실행):
-  cd "$BUILD" && npm install        # package-lock.json 생성 (선택, 로컬 확인)
+  cd "$BUILD" && npm ci && npm test # CI 게이트와 동일 커맨드로 로컬 확인 (선택 — 락파일 동봉)
   # git init / remote add / push -> github.com/$ORG/svc-$SVC
 
 손으로 확인 (sed 로 안 되는 배선):
