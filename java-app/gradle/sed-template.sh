@@ -78,8 +78,10 @@ cat <<EOF
   # git init / remote add / push -> github.com/$ORG/svc-$SVC
 
 손으로 확인 (sed 로 안 되는 배선):
-  1) 네임스페이스 '$SVC' 생성 (플랫폼 네임스페이스 매니페스트)
-  2) AppProject 'apps' 의 spec.destinations 에 namespace '$SVC' 추가
+  1) jenkins-shared-library services.yaml 의 services: 에 '$SVC': language: java 등록
+     -> 빠지면 첫 빌드가 파이프라인 조립 전에 즉시 실패 (첫 push 전에)
+  2) 네임스페이스 '$SVC' 생성 (플랫폼 네임스페이스 매니페스트)
+  3) AppProject 'apps' 의 spec.destinations 에 namespace '$SVC' 추가
      -> 빠지면 ArgoCD 가 sync 거부
 
 판정:

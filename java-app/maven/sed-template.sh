@@ -78,8 +78,9 @@ cat <<EOF
   # git init / remote add / push -> github.com/$ORG/svc-$SVC
 
 손으로 확인 (sed 로 안 되는 배선):
-  1) 네임스페이스 '$SVC' 생성 (플랫폼 네임스페이스 매니페스트)
-  2) AppProject 'apps' 의 spec.destinations 에 namespace '$SVC' 추가
+  1) CI 게이트 미지원 변형 — languages 에 maven 키 선행 없이는 Test 게이트에서 실패 (README 참조)
+  2) 네임스페이스 '$SVC' 생성 (플랫폼 네임스페이스 매니페스트)
+  3) AppProject 'apps' 의 spec.destinations 에 namespace '$SVC' 추가
      -> 빠지면 ArgoCD 가 sync 거부
 
 판정:

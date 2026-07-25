@@ -33,6 +33,15 @@ bash sed-template.sh <ORG> <SVC>
 
 ### 빌드 레포
 
+**CI 등록 선행** — 첫 push 전에 [jenkins-shared-library](https://github.com/GGingGGang/jenkins-shared-library) `resources/ci/services.yaml` 의 `services:` 에 한 줄 (그 레포에 commit·push):
+
+```yaml
+  <SVC>:
+    language: go   # go-app=go, node-app=node, java-app/gradle=java (maven 은 게이트 미지원)
+```
+
+`language` 는 필수 — 미등록 상태로 빌드가 잡히면 `ci()` 가 파이프라인 조립 전에 즉시 실패한다. 복구는 등록 후 재빌드.
+
 ```bash
 cd _generated/svc-<SVC>
 go mod tidy    # go 씨앗 기준 — node 는 생략 가능 (락파일 동봉, 확인은 npm ci && npm test), java 는 생략 가능 (CI 가 Dockerfile 안에서 빌드)
