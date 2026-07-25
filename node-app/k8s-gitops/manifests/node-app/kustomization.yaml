@@ -9,4 +9,5 @@ resources:
 images:
   - name: __SVC__
     newName: ghcr.io/__ORGLC__/svc-__SVC__
-    newTag: latest
+    # 첫 빌드의 Bump 가 SHA 로 교체 — 그 전 ErrImagePull 은 정상 (이미지 미존재)
+    newTag: bootstrap
