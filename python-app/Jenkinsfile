@@ -1,0 +1,3 @@
+@Library('shared') _
+
+ci(service: '__SVC__')
