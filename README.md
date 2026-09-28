@@ -123,7 +123,7 @@ git commit -m "onboard svc-<SVC>"
 git push
 ```
 
-루트 app-of-apps 가 `argocd/apps/<SVC>.yaml` 을 잡아 배포한다. 이후 서비스 레포의 `main` 빌드는 Deployment PR을 만들거나 갱신한다. Jenkins 파이프라인 성공은 이 PR 처리까지이므로, 배포 완료는 GitOps PR을 병합하고 Argo CD 동기화가 끝난 뒤 확인한다.
+루트 app-of-apps 가 `argocd/apps/<SVC>.yaml` 을 잡아 배포한다. 서비스 CI는 GitOps `main`에 이미지 태그 변경을 직접 push하고, Argo CD가 이를 자동 동기화한다. Jenkins 파이프라인 성공은 이 GitOps push까지를 뜻하므로, 실제 배포 완료는 Argo CD의 Sync와 Health 상태를 확인한 뒤 판단한다.
 
 ### 배포 완료 판정
 
